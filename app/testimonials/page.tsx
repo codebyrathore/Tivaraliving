@@ -1,12 +1,12 @@
 import type { Metadata } from "next"
 import { TestimonialsHeader } from "@/components/testimonials/testimonials-header"
-import { TestimonialsGrid } from "@/components/testimonials/testimonials-grid"
 import { TestimonialsStats } from "@/components/testimonials/testimonials-stats"
+import { TestimonialsGrid } from "@/components/testimonials/testimonials-grid"
 
 export const metadata: Metadata = {
-  title: "Testimonials - Tivara Living | Customer Success Stories",
+  title: "Testimonials - Tivara Living | Customer Stories & Reviews",
   description:
-    "Read authentic stories from our customers who have transformed their lives through Ayurvedic wellness and holistic healing.",
+    "Read authentic testimonials from our customers who have transformed their lives with Tivara Living's Ayurvedic products and wellness solutions.",
 }
 
 export default function TestimonialsPage() {
@@ -14,7 +14,9 @@ export default function TestimonialsPage() {
     <div className="min-h-screen bg-stone-50">
       <TestimonialsHeader />
       <TestimonialsStats />
-      <TestimonialsGrid />
+      <div className="container mx-auto px-4 py-12 max-w-7xl">
+        <TestimonialsGrid />
+      </div>
     </div>
   )
 }

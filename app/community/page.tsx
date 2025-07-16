@@ -15,7 +15,7 @@ export default function CommunityPage() {
     <div className="min-h-screen bg-stone-50">
       <CommunityHeader />
       <CommunityFeatures />
-      <div className="container-custom py-12">
+      <div className="container mx-auto px-4 py-12 max-w-7xl">
         <div className="grid lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2">
             <CommunityFeed />

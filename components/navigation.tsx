@@ -129,7 +129,7 @@ export function Navigation() {
               </div>
             </div>
 
-            <Link href="/blog" className="text-stone-700 hover:text-emerald-600 font-medium transition-colors">
+            <Link href="/journal" className="text-stone-700 hover:text-emerald-600 font-medium transition-colors">
               Journal
             </Link>
             <Link href="/community" className="text-stone-700 hover:text-emerald-600 font-medium transition-colors">
@@ -297,7 +297,7 @@ export function Navigation() {
                 </Link>
               </div>
               <Link
-                href="/blog"
+                href="/journal"
                 className="text-stone-700 hover:text-emerald-600 font-medium transition-colors"
                 onClick={() => setIsOpen(false)}
               >
