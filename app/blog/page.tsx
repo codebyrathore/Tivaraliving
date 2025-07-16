@@ -4,16 +4,16 @@ import { BlogGrid } from "@/components/blog/blog-grid"
 import { BlogSidebar } from "@/components/blog/blog-sidebar"
 
 export const metadata: Metadata = {
-  title: "Journal - Tivara Living | Wellness & Ayurveda Insights",
+  title: "Blog - Tivara Living | Wellness & Ayurveda Insights",
   description:
-    "Discover ancient wisdom and modern wellness insights through our comprehensive journal on Ayurveda, healing, and spiritual living.",
+    "Discover ancient wisdom and modern wellness insights through our comprehensive blog on Ayurveda, healing, and spiritual living.",
 }
 
 export default function BlogPage() {
   return (
     <div className="min-h-screen bg-stone-50">
       <BlogHeader />
-      <div className="container mx-auto px-4 py-12 max-w-7xl">
+      <div className="container-custom py-12">
         <div className="grid lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2">
             <BlogGrid />

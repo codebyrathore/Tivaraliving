@@ -3,11 +3,10 @@
 import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { MessageCircle, X, Minimize2, Send } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { MessageCircle, X, Send, User, Minimize2, Maximize2 } from "lucide-react"
 
 interface Message {
   id: string
@@ -22,16 +21,16 @@ export function LiveChatWidget() {
   const [isMinimized, setIsMinimized] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: "1",
-      text: "Hello! Welcome to Tivara Living. How can I help you today?",
+      id: "welcome",
+      text: "Hello! Welcome to Tivara Living. I'm here to help you with any questions about our wellness products. How can I assist you today?",
       sender: "agent",
       timestamp: new Date(),
       senderName: "Priya",
     },
   ])
-  const [newMessage, setNewMessage] = useState("")
+  const [inputValue, setInputValue] = useState("")
   const [isTyping, setIsTyping] = useState(false)
-  const [agentStatus, setAgentStatus] = useState<"online" | "offline">("online")
+  const [isAgentOnline, setIsAgentOnline] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -43,31 +42,40 @@ export function LiveChatWidget() {
   }, [messages])
 
   const sendMessage = () => {
-    if (!newMessage.trim()) return
+    if (!inputValue.trim()) return
 
-    const userMessage: Message = {
+    const newMessage: Message = {
       id: Date.now().toString(),
-      text: newMessage,
+      text: inputValue,
       sender: "user",
       timestamp: new Date(),
     }
 
-    setMessages((prev) => [...prev, userMessage])
-    setNewMessage("")
+    setMessages((prev) => [...prev, newMessage])
+    setInputValue("")
     setIsTyping(true)
 
     // Simulate agent response
     setTimeout(() => {
-      const agentMessage: Message = {
+      setIsTyping(false)
+      const responses = [
+        "Thank you for your question! Let me help you with that.",
+        "I understand your concern. Our wellness experts recommend...",
+        "That's a great question about our Ayurvedic products. Based on your needs...",
+        "I'd be happy to help you find the perfect product for your wellness journey.",
+        "Let me connect you with our Ayurveda specialist who can provide detailed guidance.",
+      ]
+
+      const agentResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Thank you for your message! I'll help you with that right away. Let me check our product recommendations for you.",
+        text: responses[Math.floor(Math.random() * responses.length)],
         sender: "agent",
         timestamp: new Date(),
         senderName: "Priya",
       }
-      setMessages((prev) => [...prev, agentMessage])
-      setIsTyping(false)
-    }, 2000)
+
+      setMessages((prev) => [...prev, agentResponse])
+    }, 1500)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -77,36 +85,48 @@ export function LiveChatWidget() {
     }
   }
 
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })
+  }
+
   if (!isOpen) {
     return (
-      <Button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-sage-600 hover:bg-sage-700 shadow-lg z-50"
-        size="icon"
-      >
-        <MessageCircle className="h-6 w-6" />
-      </Button>
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button
+          onClick={() => setIsOpen(true)}
+          className="rounded-full w-14 h-14 bg-emerald-600 hover:bg-emerald-700 shadow-lg"
+          size="lg"
+        >
+          <MessageCircle className="w-6 h-6" />
+        </Button>
+        {isAgentOnline && (
+          <div className="absolute -top-2 -left-2 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+        )}
+      </div>
     )
   }
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <Card className={`w-80 shadow-xl transition-all duration-300 ${isMinimized ? "h-16" : "h-96"}`}>
-        <CardHeader className="p-4 bg-sage-600 text-white rounded-t-lg">
+        <CardHeader className="p-4 bg-emerald-600 text-white rounded-t-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="/placeholder.svg?height=32&width=32&text=P" />
-                <AvatarFallback>P</AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle className="text-sm">Tivara Support</CardTitle>
-                <div className="flex items-center space-x-1">
-                  <div
-                    className={`w-2 h-2 rounded-full ${agentStatus === "online" ? "bg-green-400" : "bg-gray-400"}`}
-                  />
-                  <span className="text-xs opacity-90">{agentStatus === "online" ? "Online" : "Offline"}</span>
+              <div className="relative">
+                <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4" />
                 </div>
+                {isAgentOnline && (
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border border-white"></div>
+                )}
+              </div>
+              <div>
+                <CardTitle className="text-sm">Live Support</CardTitle>
+                <p className="text-xs opacity-90">{isAgentOnline ? "Priya is online" : "We'll respond soon"}</p>
               </div>
             </div>
             <div className="flex items-center space-x-1">
@@ -114,17 +134,17 @@ export function LiveChatWidget() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="text-white hover:bg-sage-700 h-8 w-8 p-0"
+                className="text-white hover:bg-emerald-700 p-1"
               >
-                <Minimize2 className="h-4 w-4" />
+                {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsOpen(false)}
-                className="text-white hover:bg-sage-700 h-8 w-8 p-0"
+                className="text-white hover:bg-emerald-700 p-1"
               >
-                <X className="h-4 w-4" />
+                <X className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -140,33 +160,34 @@ export function LiveChatWidget() {
                     className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[80%] p-3 rounded-lg ${
-                        message.sender === "user" ? "bg-sage-600 text-white" : "bg-stone-100 text-stone-900"
+                      className={`max-w-xs px-3 py-2 rounded-lg ${
+                        message.sender === "user" ? "bg-emerald-600 text-white" : "bg-gray-100 text-gray-900"
                       }`}
                     >
                       {message.sender !== "user" && message.senderName && (
-                        <div className="text-xs text-stone-600 mb-1">{message.senderName}</div>
+                        <p className="text-xs font-medium mb-1 text-emerald-600">{message.senderName}</p>
                       )}
-                      <div className="text-sm">{message.text}</div>
-                      <div className={`text-xs mt-1 ${message.sender === "user" ? "text-sage-100" : "text-stone-500"}`}>
-                        {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                      </div>
+                      <p className="text-sm">{message.text}</p>
+                      <p className={`text-xs mt-1 ${message.sender === "user" ? "text-emerald-100" : "text-gray-500"}`}>
+                        {formatTime(message.timestamp)}
+                      </p>
                     </div>
                   </div>
                 ))}
+
                 {isTyping && (
                   <div className="flex justify-start">
-                    <div className="bg-stone-100 text-stone-900 p-3 rounded-lg">
+                    <div className="bg-gray-100 px-3 py-2 rounded-lg">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-stone-400 rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                         <div
-                          className="w-2 h-2 bg-stone-400 rounded-full animate-bounce"
+                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
                           style={{ animationDelay: "0.1s" }}
-                        />
+                        ></div>
                         <div
-                          className="w-2 h-2 bg-stone-400 rounded-full animate-bounce"
+                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
                           style={{ animationDelay: "0.2s" }}
-                        />
+                        ></div>
                       </div>
                     </div>
                   </div>
@@ -178,21 +199,22 @@ export function LiveChatWidget() {
             <div className="p-4 border-t">
               <div className="flex space-x-2">
                 <Input
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Type your message..."
                   className="flex-1"
                 />
                 <Button
                   onClick={sendMessage}
-                  disabled={!newMessage.trim()}
+                  disabled={!inputValue.trim()}
                   size="sm"
-                  className="bg-sage-600 hover:bg-sage-700"
+                  className="bg-emerald-600 hover:bg-emerald-700"
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="w-4 h-4" />
                 </Button>
               </div>
+              <p className="text-xs text-gray-500 mt-2">Typically replies in a few minutes</p>
             </div>
           </>
         )}
